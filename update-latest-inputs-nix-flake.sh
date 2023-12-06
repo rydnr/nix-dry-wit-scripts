@@ -66,7 +66,7 @@ function main() {
 }
 
 ## Script metadata and CLI settings.
-setScriptDescription "Updates the flake inputs to its latest versions";
+setScriptDescription "Updates the flake inputs to their latest versions";
 setScriptLicenseSummary "Distributed under the terms of the GNU General Public License v3";
 setScriptCopyright "Copyleft 2023-today Automated Computing Machinery S.L.";
 
