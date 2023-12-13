@@ -1,0 +1,96 @@
+{
+  "nodes": {
+    "dry-wit": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixos": [
+          "nixos"
+        ]
+      },
+      "locked": {
+        "dir": "nix",
+        "lastModified": 1702499744,
+        "narHash": "sha256-fTnG8qnPlRYrVSpwDGJL/Jn5/Ge1F++/0vLCZAh4AhU=",
+        "owner": "rydnr",
+        "repo": "dry-wit",
+        "rev": "104719bec3cfb50d1ecf99469807dff2753961cd",
+        "type": "github"
+      },
+      "original": {
+        "dir": "nix",
+        "owner": "rydnr",
+        "ref": "3.0.8",
+        "repo": "dry-wit",
+        "type": "github"
+      }
+    },
+    "flake-utils": {
+      "locked": {
+        "lastModified": 1652776076,
+        "narHash": "sha256-gzTw/v1vj4dOVbpBSJX4J0DwUR6LIyXo7/SuuTJp1kM=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "04c1b180862888302ddfb2e3ad9eaa63afc60cf8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "ref": "v1.0.0",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "nixos": {
+      "locked": {
+        "lastModified": 1702221085,
+        "narHash": "sha256-Br3GCSkkvkmw46cT6wCz6ro2H1WgDMWbKE0qctbdtL0=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "c2786e7084cbad90b4f9472d5b5e35ecb57958af",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-23.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "pythoneda-shared-pythoneda-banner": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixos": [
+          "nixos"
+        ]
+      },
+      "locked": {
+        "lastModified": 1702405836,
+        "narHash": "sha256-CtOJHg95ZVeUGIFa4dWONdyb1HZoNQ+X/TR307NbnQI=",
+        "owner": "pythoneda-shared-pythoneda-def",
+        "repo": "banner",
+        "rev": "d391e0941b4f45dd96810239a703ab593b02e818",
+        "type": "github"
+      },
+      "original": {
+        "owner": "pythoneda-shared-pythoneda-def",
+        "ref": "0.0.37",
+        "repo": "banner",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "dry-wit": "dry-wit",
+        "flake-utils": "flake-utils",
+        "nixos": "nixos",
+        "pythoneda-shared-pythoneda-banner": "pythoneda-shared-pythoneda-banner"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

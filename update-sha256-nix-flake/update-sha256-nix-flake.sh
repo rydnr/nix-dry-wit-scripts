@@ -26,7 +26,7 @@ function main() {
   fi
 
   logDebug -n "Extracting org from ${_flakeFile}";
-  if extract_org "${_flakeFile}"; then
+  if extractOrgFromFlakeNix "${_flakeFile}"; then
     _org="${RESULT}";
     logDebugResult SUCCESS "${_org}";
   else
@@ -36,7 +36,7 @@ function main() {
 
   local _repo;
   logDebug -n "Extracting repo from ${_flakeFile}";
-  if extract_repo "${_flakeFile}"; then
+  if extractRepoFromFlakeNix "${_flakeFile}"; then
     _repo="${RESULT}";
     logDebugResult SUCCESS "${_repo}";
   else
@@ -63,7 +63,7 @@ function main() {
   fi
 
   logDebug -n "Updating version in ${_flakeFile} to ${_projectVersion}";
-  if update_version_in_flake "${_flakeFile}" "${_projectVersion}"; then
+  if updateVersionInFlakeNix "${_flakeFile}" "${_projectVersion}"; then
     logDebugResult SUCCESS "done";
   else
     logDebugResult FAILURE "error";
@@ -74,7 +74,7 @@ function main() {
     local _sha256;
     local _url="https://github.com/${_org}/${_repo}";
     logDebug -n "Fetching sha256 of ${_url}, rev ${_projectVersion}"
-    if fetch_sha256 "${_url}" "${_projectVersion}"; then
+    if fetchSha256FromUrl "${_url}" "${_projectVersion}"; then
       _sha256="${RESULT}";
       logDebugResult SUCCESS "${_sha256}";
     else
@@ -83,7 +83,7 @@ function main() {
     fi
 
     logDebug -n "Updating sha256 in ${_flakeFile}";
-    if update_sha256_in_flake "${_flakeFile}" "${_sha256}"; then
+    if updateSha256InFlakeNix "${_flakeFile}" "${_sha256}"; then
       logDebugResult SUCCESS "done";
     else
       logDebugResult FAILURE "error";
