@@ -25,7 +25,7 @@
     dry-wit = {
       inputs.flake-utils.follows = "flake-utils";
       inputs.nixos.follows = "nixos";
-      url = "github:rydnr/dry-wit/3.0.8?dir=nix";
+      url = "github:rydnr/dry-wit/3.0.9?dir=nix";
     };
     pythoneda-shared-pythoneda-banner = {
       inputs.flake-utils.follows = "flake-utils";
@@ -46,7 +46,7 @@
         org = "rydnr";
         repo = "nix-dry-wit-scripts";
         pname = "${org}-${repo}";
-        version = "0.0.5";
+        version = "0.0.6";
         pkgs = import nixos { inherit system; };
         description =
           "dry-wit script to update the versions of the inputs of a given flake.nix file, to their latest tags";
@@ -65,7 +65,7 @@
               mkdir -p $out/bin
               cp release-tag/release-tag.sh $out/bin
               chmod +x $out/bin/release-tag.sh
-              cp README.md LICENSE $out/
+              cp release-tag/README.md LICENSE $out/
               substituteInPlace $out/bin/release-tag.sh \
                 --replace "#!/usr/bin/env dry-wit" "#!/usr/bin/env ${dry-wit}/dry-wit"
             '';

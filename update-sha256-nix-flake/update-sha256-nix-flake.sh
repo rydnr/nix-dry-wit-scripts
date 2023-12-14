@@ -103,8 +103,8 @@ setScriptDescription "Updates the version and sha256 hash of a PythonEDA-specifi
 setScriptLicenseSummary "Distributed under the terms of the GNU General Public License v3";
 setScriptCopyright "Copyleft 2023-today Automated Computing Machinery S.L.";
 
-addCommandLineFlag "version" "V" "The version" OPTIONAL EXPECTS_ARGUMENT;
-addCommandLineFlag "flake" "f" "The Nix flake" OPTIONAL EXPECTS_ARGUMENT;
+addCommandLineFlag "projectVersion" "V" "The version" OPTIONAL EXPECTS_ARGUMENT;
+addCommandLineFlag "flakeFile" "f" "The Nix flake" OPTIONAL EXPECTS_ARGUMENT;
 
 checkReq nix-prefetch-git;
 checkReq jq;
@@ -118,12 +118,4 @@ addError CANNOT_EXTRACT_REPO_FROM_FLAKE "Cannot extract the 'repo' value from ";
 addError CANNOT_FETCH_SHA256_FROM_URL "Cannot fetch the sha256 hash from ";
 addError CANNOT_UPDATE_VERSION_IN_FLAKE "Cannot update the 'version' value in ";
 addError CANNOT_UPDATE_SHA256_IN_FLAKE "Cannot update the 'sha256' value in ";
-
-function dw_parse_version_cli_flag() {
-  export PROJECT_VERSION="${1}";
-}
-
-function dw_parse_flake_cli_flag() {
-  export FLAKE_FILE="${1}";
-}
 # vim: syntax=sh ts=2 sw=2 sts=4 sr noet

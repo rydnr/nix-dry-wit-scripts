@@ -24,7 +24,7 @@
     dry-wit = {
       inputs.flake-utils.follows = "flake-utils";
       inputs.nixos.follows = "nixos";
-      url = "github:rydnr/dry-wit/3.0.8?dir=nix";
+      url = "github:rydnr/dry-wit/3.0.9?dir=nix";
     };
     pythoneda-shared-pythoneda-banner = {
       inputs.flake-utils.follows = "flake-utils";
@@ -45,7 +45,7 @@
         org = "rydnr";
         repo = "nix-dry-wit-scripts";
         pname = "${org}-${repo}";
-        version = "0.0.5";
+        version = "0.0.6";
         pkgs = import nixos { inherit system; };
         description =
           "dry-wit script to update the sha256 values of flake.nix files";
@@ -64,7 +64,7 @@
               mkdir -p $out/bin
               cp -r update-sha256-nix-flake/update-sha256-nix-flake.sh $out/bin
               chmod +x $out/bin/update-sha256-nix-flake.sh
-              cp README.md LICENSE $out/
+              cp update-sha256-nix-flake/README.md LICENSE $out/
               substituteInPlace $out/bin/update-sha256-nix-flake.sh \
                 --replace "#!/usr/bin/env dry-wit" "#!/usr/bin/env ${dry-wit}/dry-wit"
             '';

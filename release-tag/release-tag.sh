@@ -20,44 +20,61 @@ function main() {
     fi
   fi
 
-  local _repoName;
-  _repoName="$(basename "${_gitRepo}")";
-  local _owner;
-  _owner="$(basename "$(dirname "${_gitRepo}")")";
+  local _url;
+  if retrieveRepositoryUrl "${_gitRepo}"; then
+     _url="${RESULT}";
+  else
+    exitWithErrorCode FOLDER_IS_NOT_A_GIT_REPOSITORY;
+  fi
+  local _owner="unknown";
+  if extractOwnerFromGithubUrl "${_url}"; then
+    _owner="${RESULT}";
+  fi
+  local _repoName="unknown";
+  if extractRepoFromGithubUrl "${_url}"; then
+    _repoName="${RESULT}";
+  fi
   logDebug -n "Checking if ${_owner}/${_repoName} contains anything to release";
   if isGitRepoDirty "${_gitRepo}"; then
     logDebugResult SUCCESS "true";
-    logDebug -n "Checking if ${_owner}/${_repoName} contains changes besides flake.nix and flake.lock";
-    if gitRepoContainsChangesBesides "${_gitRepo}" "flake.nix" "flake.lock"; then
-      logDebugResult NEUTRAL "dirty";
-      logInfo "Skipping ${_owner}/${_repoName} since it has uncommitted changes";
-    else
-      logDebugResult SUCCESS "clean";
-      logInfo -n "Committing flake.nix and flake.lock";
-      if ! gitAdd "${_gitRepo}" "flake.nix"; then
-        logInfoResult FAILURE "failed";
-        exitWithErrorCode CANNOT_ADD_FLAKE_NIX "${_gitRepo}";
-      fi
-      if ! gitAdd "${_gitRepo}" "flake.lock"; then
-        logInfoResult FAILURE "failed";
-        exitWithErrorCode CANNOT_ADD_FLAKE_NIX "${_gitRepo}";
-      fi
-      if ! gitCommit "${_gitRepo}" "${COMMIT_MESSAGE}" "${GPG_KEY_ID}"; then
-        logInfoResult FAILURE "failed";
-        exitWithErrorCode GIT_COMMIT_FAILED "${_gitRepo}";
-      fi
-      logInfoResult SUCCESS "done";
-
-      release "${_gitRepo}";
-      local _newVersion="${RESULT}";
-      logDebug -n "Pushing the tags in ${_gitRepo}";
-      if gitPushTags "${_gitRepo}"; then
-        logDebugResult SUCCESS "done";
+    logDebug -n "Checking if ${_owner}/${_repoName} contains changes in flake.nix and flake.lock";
+    if gitRepoContainsChangesIn "${_gitRepo}" "flake.nix" "flake.lock"; then
+      logDebugResult SUCCESS "true";
+      logDebug -n "Checking if ${_owner}/${_repoName} contains changes besides flake.nix and flake.lock";
+      if gitRepoContainsChangesBesides "${_gitRepo}" "flake.nix" "flake.lock"; then
+        logDebugResult NEUTRAL "dirty";
+        logInfo "Skipping ${_owner}/${_repoName} since it has uncommitted changes";
       else
-        logDebugResult FAILURE "failed";
-        exitWithErrorCode GIT_PUSH_TAGS_FAILED "${_gitRepo}";
+        logDebugResult SUCCESS "clean";
+        logInfo -n "Committing flake.nix and flake.lock";
+        if ! gitAdd "${_gitRepo}" "flake.nix"; then
+          logInfoResult FAILURE "failed";
+          exitWithErrorCode CANNOT_ADD_FLAKE_NIX "${_gitRepo}";
+        fi
+        if ! gitAdd "${_gitRepo}" "flake.lock"; then
+          logInfoResult FAILURE "failed";
+          exitWithErrorCode CANNOT_ADD_FLAKE_NIX "${_gitRepo}";
+        fi
+        if ! gitCommit "${_gitRepo}" "${COMMIT_MESSAGE}" "${GPG_KEY_ID}"; then
+          logInfoResult FAILURE "failed";
+          exitWithErrorCode GIT_COMMIT_FAILED "${_gitRepo}";
+        fi
+        logInfoResult SUCCESS "done";
+
+        release "${_gitRepo}";
+        local _newVersion="${RESULT}";
+        logDebug -n "Pushing the tags in ${_gitRepo}";
+        if gitPushTags "${_gitRepo}"; then
+          logDebugResult SUCCESS "done";
+        else
+          logDebugResult FAILURE "failed";
+          exitWithErrorCode GIT_PUSH_TAGS_FAILED "${_gitRepo}";
+        fi
+        command echo "${_newVersion}"
       fi
-      command echo "${_newVersion}"
+    else
+      logDebugResult NEUTRAL "false";
+      logInfo "Skipping ${_owner}/${_repoName} since it has no changes in flake files";
     fi
   else
     logDebugResult NEUTRAL "false";
@@ -159,6 +176,7 @@ checkReq sed;
 checkReq grep;
 
 addError REPOSITORY_DOES_NOT_EXIST "Repository folder does not exist";
+addError FOLDER_IS_NOT_A_GIT_REPOSITORY "Given folder is not a git repository";
 addError GPG_KEY_ID_DOES_NOT_EXIST "GPG key id does not exist";
 addError CANNOT_RETRIEVE_THE_LATEST_REMOTE_TAG_IN_GITHUB "Cannot retrieve the latest remote tag in github (or it's not semver-compatible)";
 addError CANNOT_EXTRACT_OWNER_FROM_GITHUB_URL "Cannot extract the owner information from the url";

@@ -11,17 +11,17 @@
       },
       "locked": {
         "dir": "nix",
-        "lastModified": 1702499744,
-        "narHash": "sha256-fTnG8qnPlRYrVSpwDGJL/Jn5/Ge1F++/0vLCZAh4AhU=",
+        "lastModified": 1702566787,
+        "narHash": "sha256-1I6VdtD0REUxmtrjlmL9K2lBLxzKMrTPdhHeo6+xYog=",
         "owner": "rydnr",
         "repo": "dry-wit",
-        "rev": "104719bec3cfb50d1ecf99469807dff2753961cd",
+        "rev": "d26c4b6b88bcb912f1e8a9f32c009edf2221345c",
         "type": "github"
       },
       "original": {
         "dir": "nix",
         "owner": "rydnr",
-        "ref": "3.0.8",
+        "ref": "3.0.9",
         "repo": "dry-wit",
         "type": "github"
       }
@@ -44,11 +44,11 @@
     },
     "nixos": {
       "locked": {
-        "lastModified": 1702221085,
-        "narHash": "sha256-Br3GCSkkvkmw46cT6wCz6ro2H1WgDMWbKE0qctbdtL0=",
+        "lastModified": 1702350026,
+        "narHash": "sha256-A+GNZFZdfl4JdDphYKBJ5Ef1HOiFsP18vQe9mqjmUis=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "c2786e7084cbad90b4f9472d5b5e35ecb57958af",
+        "rev": "9463103069725474698139ab10f17a9d125da859",
         "type": "github"
       },
       "original": {

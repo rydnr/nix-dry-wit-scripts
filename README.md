@@ -1,6 +1,6 @@
 # Nix dry-wit scripts
 
-Miscellaneus dry-wit (Bash) scripts focused on [Nix](https://nixos.org "Nix").
+Miscellaneus [dry-wit](https://github.com/rydnr/dry-wit "dry-wit") (Bash) scripts focused on [Nix](https://nixos.org "Nix").
 
 ## update-sha256-nix-flake.sh
 
