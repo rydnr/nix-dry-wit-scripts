@@ -46,7 +46,7 @@
         org = "rydnr";
         repo = "nix-dry-wit-scripts";
         pname = "${org}-${repo}";
-        version = "0.0.3";
+        version = "0.0.4";
         pkgs = import nixos { inherit system; };
         description =
           "dry-wit script to update the versions of the inputs of a given flake.nix file, to their latest tags";
@@ -57,15 +57,16 @@
         release-tag-for = { dry-wit }:
           pkgs.stdenv.mkDerivation rec {
             inherit pname version;
-            src = ./.;
+            src = ../.;
             propagatedBuildInputs = [ dry-wit ];
             phases = [ "unpackPhase" "installPhase" ];
 
             installPhase = ''
-              mkdir -p $out
-              cp -r src/* $out
+              mkdir -p $out/bin
+              cp release-tag/release-tag.sh $out/bin
+              chmod +x $out/bin/release-tag.sh
               cp README.md LICENSE $out/
-              substituteInPlace $out/release-tag.sh \
+              substituteInPlace $out/bin/release-tag.sh \
                 --replace "#!/usr/bin/env dry-wit" "#!/usr/bin/env ${dry-wit}/dry-wit"
             '';
 

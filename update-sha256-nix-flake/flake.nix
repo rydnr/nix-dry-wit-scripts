@@ -45,7 +45,7 @@
         org = "rydnr";
         repo = "nix-dry-wit-scripts";
         pname = "${org}-${repo}";
-        version = "0.0.3";
+        version = "0.0.4";
         pkgs = import nixos { inherit system; };
         description =
           "dry-wit script to update the sha256 values of flake.nix files";
@@ -56,15 +56,16 @@
         update-sha256-nix-flake-for = { dry-wit }:
           pkgs.stdenv.mkDerivation rec {
             inherit pname version;
-            src = ./.;
+            src = ../.;
             propagatedBuildInputs = [ dry-wit ];
             phases = [ "unpackPhase" "installPhase" ];
 
             installPhase = ''
-              mkdir -p $out
-              cp -r src/* $out
+              mkdir -p $out/bin
+              cp -r update-sha256-nix-flake/update-sha256-nix-flake.sh $out/bin
+              chmod +x $out/bin/update-sha256-nix-flake.sh
               cp README.md LICENSE $out/
-              substituteInPlace $out/update-sha256-nix-flake.sh \
+              substituteInPlace $out/bin/update-sha256-nix-flake.sh \
                 --replace "#!/usr/bin/env dry-wit" "#!/usr/bin/env ${dry-wit}/dry-wit"
             '';
 
