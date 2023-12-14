@@ -46,7 +46,7 @@
         org = "rydnr";
         repo = "nix-dry-wit-scripts";
         pname = "${org}-${repo}";
-        version = "0.0.4";
+        version = "0.0.5";
         pkgs = import nixos { inherit system; };
         description =
           "dry-wit script to update the versions of the inputs of a given flake.nix file, to their latest tags";
@@ -81,15 +81,15 @@
             update-latest-inputs-nix-flake-bash5;
           update-latest-inputs-nix-flake-bash5 = shared.app-for {
             package = packages.update-latest-inputs-nix-flake-bash5;
-            entrypoint = packages.update-latest-inputs-nix-flake-bash5;
+            entrypoint = "update-latest-inputs-nix-flake";
           };
           update-latest-inputs-nix-flake-zsh = shared.app-for {
             package = packages.update-latest-inputs-nix-flake-zsh;
-            entrypoint = packages.update-latest-inputs-nix-flake-zsh;
+            entrypoint = "update-latest-inputs-nix-flake";
           };
           update-latest-inputs-nix-flake-fish = shared.app-for {
             package = packages.update-latest-inputs-nix-flake-fish;
-            entrypoint = packages.update-latest-inputs-nix-flake-fish;
+            entrypoint = "update-latest-inputs-nix-flake";
           };
         };
         defaultPackage = packages.default;

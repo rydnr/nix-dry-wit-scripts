@@ -46,7 +46,7 @@
         org = "rydnr";
         repo = "nix-dry-wit-scripts";
         pname = "${org}-${repo}";
-        version = "0.0.4";
+        version = "0.0.5";
         pkgs = import nixos { inherit system; };
         description =
           "dry-wit script to update the versions of the inputs of a given flake.nix file, to their latest tags";
@@ -80,15 +80,15 @@
           release-tag-default = release-tag-bash5;
           release-tag-bash5 = shared.app-for {
             package = packages.release-tag-bash5;
-            entrypoint = packages.release-tag-bash5;
+            entrypoint = "release-tag";
           };
           release-tag-zsh = shared.app-for {
             package = packages.release-tag-zsh;
-            entrypoint = packages.release-tag-zsh;
+            entrypoint = "release-tag";
           };
           release-tag-fish = shared.app-for {
             package = packages.release-tag-fish;
-            entrypoint = packages.release-tag-fish;
+            entrypoint = "release-tag";
           };
         };
         defaultPackage = packages.default;

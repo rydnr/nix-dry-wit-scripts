@@ -45,7 +45,7 @@
         org = "rydnr";
         repo = "nix-dry-wit-scripts";
         pname = "${org}-${repo}";
-        version = "0.0.4";
+        version = "0.0.5";
         pkgs = import nixos { inherit system; };
         description =
           "dry-wit script to update the sha256 values of flake.nix files";
@@ -79,15 +79,15 @@
           update-sha256-nix-flake-default = update-sha256-nix-flake-bash5;
           update-sha256-nix-flake-bash5 = shared.app-for {
             package = packages.update-sha256-nix-flake-bash5;
-            entrypoint = packages.update-sha256-nix-flake-bash5;
+            entrypoint = "update-sha256-nix-flake";
           };
           update-sha256-nix-flake-zsh = shared.app-for {
             package = packages.update-sha256-nix-flake-zsh;
-            entrypoint = packages.update-sha256-nix-flake-zsh;
+            entrypoint = "update-sha256-nix-flake";
           };
           update-sha256-nix-flake-fish = shared.app-for {
             package = packages.update-sha256-nix-flake-fish;
-            entrypoint = packages.update-sha256-nix-flake-fish;
+            entrypoint = "update-sha256-nix-flake";
           };
         };
         defaultPackage = packages.default;
