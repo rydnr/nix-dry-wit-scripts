@@ -61,13 +61,26 @@ function main() {
     local _repo="$(echo "${_input}" | cut -d ':' -f 2 | cut -d '/' -f 2)";
     local _tag="$(echo "${_input}" | cut -d ':' -f 2 | cut -d '/' -f 3)";
     logInfo -n "Retrieving latest remote tag of github:${_owner}/${_repo}";
-    if retrieveLatestRemoteTagInGithub "${_owner}" "${_repo}" "${GITHUB_TOKEN}"; then
-      local _latest_tag="${RESULT}";
-      logInfoResult SUCCESS "${_latest_tag}";
-      if ! areEqual "${_tag}" "${_latest_tag}"; then
+    local _latestTag;
+    if areEqual "${_owner}" "NixOS" && areEqual "${_repo}" "nixpkgs"; then
+      if retrieveLatestStableNixpkgsTag "${GITHUB_TOKEN}"; then
+        _latestTag="${RESULT}";
+      fi
+    elif retrieveLatestRemoteTagInGithub "${_owner}" "${_repo}" "${GITHUB_TOKEN}"; then
+      _latestTag="${RESULT}";
+    fi
+    if isEmpty "${_latestTag}"; then
+      local _error="${ERROR}";
+      logInfoResult NEUTRAL "skipped";
+      if isNotEmpty "${_error}"; then
+        logDebug "${_error}";
+      fi
+    else
+      logInfoResult SUCCESS "${_latestTag}";
+      if ! areEqual "${_tag}" "${_latestTag}"; then
         _rescode=${TRUE};
-        logInfo -n "Updating ${_owner}/${_repo} from ${_tag} to ${_latest_tag} in ${_flakeNix}";
-        if updateInputsInFlakeNix "github:${_owner}/${_repo}/${_tag}" "github:${_owner}/${_repo}/${_latest_tag}" "${_flakeNix}"; then
+        logInfo -n "Updating ${_owner}/${_repo} from ${_tag} to ${_latestTag} in ${_flakeNix}";
+        if updateInputsInFlakeNix "github:${_owner}/${_repo}/${_tag}" "github:${_owner}/${_repo}/${_latestTag}" "${_flakeNix}"; then
           logInfoResult SUCCESS "done";
           logInfo -n "Updating $(dirname ${_flakeNix})/flake.lock";
           if updateFlakeLock "${_flakeNix}"; then
@@ -78,7 +91,7 @@ function main() {
             if isNotEmpty "${_error}"; then
               logDebug "${_error}";
             fi
-            exitWithErrorCode CANNOT_UPDATE_FLAKE_LOCK_IN_FLAKE "${_input}";
+            exitWithErrorCode CANNOT_UPDATE_FLAKE_LOCK "${_input}";
           fi
         else
           local _error="${ERROR}";
@@ -88,12 +101,6 @@ function main() {
           fi
           exitWithErrorCode CANNOT_UPDATE_FLAKE_INPUT_IN_FLAKE "${_input}";
         fi
-      fi
-    else
-      local _error="${ERROR}";
-      logInfoResult NEUTRAL "skipped";
-      if isNotEmpty "${_error}"; then
-        logDebug "${_error}";
       fi
     fi
   done
