@@ -73,7 +73,7 @@ function main() {
     _owner="$(echo "${_input}" | cut -d ':' -f 2 | cut -d '/' -f 1)";
     _repo="$(echo "${_input}" | cut -d ':' -f 2 | cut -d '/' -f 2)";
     _tag="$(echo "${_input}" | cut -d ':' -f 2 | cut -d '/' -f 3)";
-    logInfo -n "Retrieving latest remote tag of github:${_owner}/${_repo}";
+    logDebug -n "github:${_owner}/${_repo}";
     _latestTag="";
     if areEqual "${_owner}" "NixOS" && areEqual "${_repo}" "nixpkgs"; then
       if retrieveLatestStableNixpkgsTag "${GITHUB_TOKEN}"; then
@@ -84,17 +84,17 @@ function main() {
     fi
     if isEmpty "${_latestTag}"; then
       _error="${ERROR}";
-      logInfoResult NEUTRAL "skipped";
+      logDebugResult NEUTRAL "skipped";
       if isNotEmpty "${_error}"; then
         logDebug "${_error}";
       fi
     else
-      logInfoResult SUCCESS "${_latestTag}";
+      logDebugResult SUCCESS "${_latestTag}";
       if ! areEqual "${_tag}" "${_latestTag}"; then
         _rescode=${TRUE};
-        logInfo -n "Updating ${_owner}/${_repo} from ${_tag} to ${_latestTag} in ${_flakeNix}";
+        logInfo -n "$(command dirname ${_folder}):${_owner}/${_repo}:${_tag}";
         if updateInputsInFlakeNix "github:${_owner}/${_repo}/${_tag}" "github:${_owner}/${_repo}/${_latestTag}" "${_flakeNix}"; then
-          logInfoResult SUCCESS "done";
+          logInfoResult SUCCESS "${_latestTag}";
           logDebug -n "Updating $(command realpath "${_flakeLock}")";
           if updateFlakeLock "${_flakeNix}" "${GITHUB_TOKEN}"; then
             logInfoResult SUCCESS "done";
