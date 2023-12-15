@@ -33,12 +33,12 @@ function main() {
   if isEmpty "${_flakeLock}"; then
     _flakeLock="$(command dirname "${_flakeLock}")/$(command basename ${_flakeNix} .nix).lock";
     if ! fileExists "${_flakeLock}"; then
-      exitWithErrorCode FLAKE_LOCK_FILE_DOES_NOT_EXIST "${PWD}";
+      exitWithErrorCode FLAKE_LOCK_FILE_DOES_NOT_EXIST "${_folder}/flake.lock";
     fi
   fi
 
   local _error;
-  logDebug -n "Updating $(command realpath "${_flakeLock}")";
+  logDebug -n "Updating $(command dirname "${_folder}")/flake.lock";
   if updateFlakeLock "${_flakeNix}" "${GITHUB_TOKEN}"; then
     logDebugResult SUCCESS "done";
   else
