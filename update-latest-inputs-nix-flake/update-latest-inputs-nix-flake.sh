@@ -26,20 +26,28 @@ function main() {
     fi
   fi
 
+  local _folder;
+  _folder="$(command realpath "$(command dirname ${_flakeNix})")";
+
   local _flakeLock="${FLAKE_LOCK_FILE}";
   if isEmpty "${_flakeLock}"; then
-    _flakeLock="$(dirname "${_flakeLock}")/$(basename ${_flakeNix} .nix).lock";
+    _flakeLock="$(command dirname "${_flakeLock}")/$(command basename ${_flakeNix} .nix).lock";
     if ! fileExists "${_flakeLock}"; then
       exitWithErrorCode FLAKE_LOCK_FILE_DOES_NOT_EXIST "${PWD}";
     fi
   fi
 
-  logDebug -n "Updating ${_flakeLock}";
+  local _error;
+  logDebug -n "Updating $(command realpath "${_flakeLock}")";
   if updateFlakeLock "${_flakeNix}" "${GITHUB_TOKEN}"; then
     logDebugResult SUCCESS "done";
   else
+    _error="${ERROR}";
     logDebugResult FAILURE "failed";
-    exitWithErrorCode CANNOT_UPDATE_FLAKE_LOCK "${_flakeLock}";
+    if isNotEmpty "${_error}"; then
+      logDebug "${_error}";
+    fi
+    exitWithErrorCode CANNOT_UPDATE_FLAKE_LOCK "${_folder}/flake.lock";
   fi
 
   local _inputs;
@@ -52,16 +60,21 @@ function main() {
     exitWithErrorCode CANNOT_EXTRACT_INPUTS_FROM_FLAKE_LOCK "${_flakeLock}";
   fi
 
+  local _name;
+  local _owner;
+  local _repo;
+  local _tag;
+  local _latestTag;
   local _origIFS="${IFS}";
   IFS="${DWIFS}";
   for _input in ${_inputs}; do
     IFS=${_origIFS};
-    local _name="$(echo "${_input}" | cut -d ':' -f 1)";
-    local _owner="$(echo "${_input}" | cut -d ':' -f 2 | cut -d '/' -f 1)";
-    local _repo="$(echo "${_input}" | cut -d ':' -f 2 | cut -d '/' -f 2)";
-    local _tag="$(echo "${_input}" | cut -d ':' -f 2 | cut -d '/' -f 3)";
+    _name="$(echo "${_input}" | cut -d ':' -f 1)";
+    _owner="$(echo "${_input}" | cut -d ':' -f 2 | cut -d '/' -f 1)";
+    _repo="$(echo "${_input}" | cut -d ':' -f 2 | cut -d '/' -f 2)";
+    _tag="$(echo "${_input}" | cut -d ':' -f 2 | cut -d '/' -f 3)";
     logInfo -n "Retrieving latest remote tag of github:${_owner}/${_repo}";
-    local _latestTag;
+    _latestTag="";
     if areEqual "${_owner}" "NixOS" && areEqual "${_repo}" "nixpkgs"; then
       if retrieveLatestStableNixpkgsTag "${GITHUB_TOKEN}"; then
         _latestTag="${RESULT}";
@@ -70,7 +83,7 @@ function main() {
       _latestTag="${RESULT}";
     fi
     if isEmpty "${_latestTag}"; then
-      local _error="${ERROR}";
+      _error="${ERROR}";
       logInfoResult NEUTRAL "skipped";
       if isNotEmpty "${_error}"; then
         logDebug "${_error}";
@@ -82,16 +95,16 @@ function main() {
         logInfo -n "Updating ${_owner}/${_repo} from ${_tag} to ${_latestTag} in ${_flakeNix}";
         if updateInputsInFlakeNix "github:${_owner}/${_repo}/${_tag}" "github:${_owner}/${_repo}/${_latestTag}" "${_flakeNix}"; then
           logInfoResult SUCCESS "done";
-          logInfo -n "Updating $(dirname ${_flakeNix})/flake.lock";
+          logDebug -n "Updating $(command realpath "${_flakeLock}")";
           if updateFlakeLock "${_flakeNix}" "${GITHUB_TOKEN}"; then
             logInfoResult SUCCESS "done";
           else
-            local _error="${ERROR}";
+            _error="${ERROR}";
             logInfoResult FAILURE "failed";
             if isNotEmpty "${_error}"; then
               logDebug "${_error}";
             fi
-            exitWithErrorCode CANNOT_UPDATE_FLAKE_LOCK "${_input}";
+            exitWithErrorCode CANNOT_UPDATE_FLAKE_LOCK "${_folder}/flake.lock";
           fi
         else
           local _error="${ERROR}";
