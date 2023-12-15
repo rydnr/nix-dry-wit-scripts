@@ -11,17 +11,17 @@
       },
       "locked": {
         "dir": "nix",
-        "lastModified": 1702569931,
-        "narHash": "sha256-kVvvQkv01VkWK8l3AWLhrUL+ruklJd7TatNi3emxl58=",
+        "lastModified": 1702634158,
+        "narHash": "sha256-nTbxpKRP/nRh/YyUVADmPh3Yh6nLUVpIIovJebkI87o=",
         "owner": "rydnr",
         "repo": "dry-wit",
-        "rev": "97478a825db7224a2677ab5b23ac2174e07dd1da",
+        "rev": "42336f2ffa529cf02362bb092b2efe516fc18bfb",
         "type": "github"
       },
       "original": {
         "dir": "nix",
         "owner": "rydnr",
-        "ref": "3.0.10",
+        "ref": "3.0.12",
         "repo": "dry-wit",
         "type": "github"
       }

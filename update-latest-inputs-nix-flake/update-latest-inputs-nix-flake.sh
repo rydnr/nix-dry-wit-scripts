@@ -35,7 +35,7 @@ function main() {
   fi
 
   logDebug -n "Updating ${_flakeLock}";
-  if updateFlakeLock "${_flakeNix}"; then
+  if updateFlakeLock "${_flakeNix}" "${GITHUB_TOKEN}"; then
     logDebugResult SUCCESS "done";
   else
     logDebugResult FAILURE "failed";
@@ -83,7 +83,7 @@ function main() {
         if updateInputsInFlakeNix "github:${_owner}/${_repo}/${_tag}" "github:${_owner}/${_repo}/${_latestTag}" "${_flakeNix}"; then
           logInfoResult SUCCESS "done";
           logInfo -n "Updating $(dirname ${_flakeNix})/flake.lock";
-          if updateFlakeLock "${_flakeNix}"; then
+          if updateFlakeLock "${_flakeNix}" "${GITHUB_TOKEN}"; then
             logInfoResult SUCCESS "done";
           else
             local _error="${ERROR}";
