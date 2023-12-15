@@ -37,16 +37,16 @@ function main() {
   logDebug -n "Checking if ${_owner}/${_repoName} contains anything to release";
   if isGitRepoDirty "${_gitRepo}"; then
     logDebugResult SUCCESS "true";
-    logDebug -n "Checking if ${_owner}/${_repoName} contains changes in flake.nix and flake.lock";
-    if gitRepoContainsChangesIn "${_gitRepo}" "flake.nix" "flake.lock"; then
+    logDebug -n "Checking if ${_owner}/${_repoName} contains modifications in flake.nix and flake.lock";
+    if gitRepoContainsModificationsIn "${_gitRepo}" "flake.nix" "flake.lock"; then
       logDebugResult SUCCESS "true";
-      logDebug -n "Checking if ${_owner}/${_repoName} contains changes besides flake.nix and flake.lock";
-      if gitRepoContainsChangesBesides "${_gitRepo}" "flake.nix" "flake.lock"; then
+      logDebug -n "Checking if ${_owner}/${_repoName} contains modifications besides flake.nix and flake.lock";
+      if gitRepoContainsModificationsBesides "${_gitRepo}" "flake.nix" "flake.lock"; then
         logDebugResult NEUTRAL "dirty";
         logInfo "Skipping ${_owner}/${_repoName} since it has uncommitted changes";
       else
         logDebugResult SUCCESS "clean";
-        logInfo -n "Committing flake.nix and flake.lock";
+        logInfo -n "Committing flake.nix and flake.lock in ${_owner}/${_repoName}";
         if ! gitAdd "${_gitRepo}" "flake.nix"; then
           logInfoResult FAILURE "failed";
           exitWithErrorCode CANNOT_ADD_FLAKE_NIX "${_gitRepo}";
@@ -75,9 +75,11 @@ function main() {
     else
       logDebugResult NEUTRAL "false";
       logInfo "Skipping ${_owner}/${_repoName} since it has no changes in flake files";
+      exitWithErrorCode NO_FLAKE_CHANGES_IN_REPO "${_gitRepo}";
     fi
   else
     logDebugResult NEUTRAL "false";
+    exitWithErrorCode NO_CHANGES_IN_REPO "${_gitRepo}";
   fi
 }
 
@@ -188,6 +190,8 @@ addError GIT_COMMIT_FAILED "'git commit' failed in";
 addError GIT_TAG_FAILED "'git tag' failed in";
 addError GIT_PUSH_FAILED "'git push' failed in";
 addError GIT_PUSH_TAGS_FAILED "'git push --tags' failed in";
+addError NO_CHANGES_IN_REPO "Repository has no changes";
+addError NO_FLAKE_CHANGES_IN_REPO "Repository has no changes in flake files";
 
 function dw_check_repo_cli_flag() {
   if ! folderExists "${REPOSITORY}"; then
