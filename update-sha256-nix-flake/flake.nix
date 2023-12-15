@@ -24,7 +24,7 @@
     dry-wit = {
       inputs.flake-utils.follows = "flake-utils";
       inputs.nixos.follows = "nixos";
-      url = "github:rydnr/dry-wit/3.0.13?dir=nix";
+      url = "github:rydnr/dry-wit/3.0.14?dir=nix";
     };
     pythoneda-shared-pythoneda-banner = {
       inputs.flake-utils.follows = "flake-utils";
@@ -45,7 +45,7 @@
         org = "rydnr";
         repo = "nix-dry-wit-scripts";
         pname = "${org}-${repo}";
-        version = "0.0.11";
+        version = "0.0.13";
         pkgs = import nixos { inherit system; };
         description =
           "dry-wit script to update the sha256 values of flake.nix files";
