@@ -25,7 +25,7 @@
     dry-wit = {
       inputs.flake-utils.follows = "flake-utils";
       inputs.nixos.follows = "nixos";
-      url = "github:rydnr/dry-wit/3.0.18?dir=nix";
+      url = "github:rydnr/dry-wit/3.0.19?dir=nix";
     };
     pythoneda-shared-banner = {
       inputs.flake-utils.follows = "flake-utils";
