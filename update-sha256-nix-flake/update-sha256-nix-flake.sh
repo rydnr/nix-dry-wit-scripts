@@ -5,6 +5,7 @@
 DW.import file;
 DW.import nix-flake;
 DW.import git;
+DW.import github;
 
 # fun: main
 # api: public
@@ -30,7 +31,11 @@ function main() {
     _org="${RESULT}";
     logDebugResult SUCCESS "${_org}";
   else
+    local _error="${ERROR}";
     logDebugResult FAILURE "error";
+    if ! isEmpty "${_error}"; then
+      logDebug "${_error}";
+    fi
     exitWithErrorCode CANNOT_EXTRACT_ORG_FROM_FLAKE "${_flakeFile}";
   fi
 
@@ -40,19 +45,27 @@ function main() {
     _repo="${RESULT}";
     logDebugResult SUCCESS "${_repo}";
   else
+    local _error="${ERROR}";
     logDebugResult FAILURE "error";
+    if ! isEmpty "${_error}"; then
+      logDebug "${_error}";
+    fi
     exitWithErrorCode CANNOT_EXTRACT_REPO_FROM_FLAKE "${_flakeFile}";
   fi
 
   local _projectVersion="${PROJECT_VERSION}";
   if isEmpty "${_projectVersion}"; then
-    logDebug -n "Retrieving latest tag of ${_org}/${_repo}";
-    if retrieveLatestRemoteTagInGithub "${_org}" "${_repo}"; then
+    logDebug -n "Retrieving latest tag of github:${_org}/${_repo}";
+    if retrieveLatestRemoteTagInGithub "${_org}" "${_repo}" "${GITHUB_TOKEN}"; then
       _projectVersion="${RESULT}";
       logDebugResult SUCCESS "${_projectVersion}";
     else
+      local _error="${ERROR}";
       logDebugResult FAILURE "error";
-      exitWithErrorCode CANNOT_RETRIEVE_LATEST_VERSION_OF_REPO "${_repo}";
+      if ! isEmpty "${_error}"; then
+        logDebug "${_error}";
+      fi
+      exitWithErrorCode CANNOT_RETRIEVE_LATEST_VERSION_OF_REPO "${_org}/${_repo}";
     fi
   fi
 
@@ -66,9 +79,13 @@ function main() {
   if updateVersionInFlakeNix "${_flakeFile}" "${_projectVersion}"; then
     logDebugResult SUCCESS "done";
   else
+    local _error="${ERROR}";
     logDebugResult FAILURE "error";
+    if ! isEmpty "${_error}"; then
+      logDebug "${_error}";
+    fi
     exitWithErrorCode CANNOT_UPDATE_VERSION_IN_FLAKE "${_flakeFile} ${_projectVersion}";
-  fi
+    fi
 
   if isTrue ${_updateSha256}; then
     local _sha256;
@@ -78,7 +95,11 @@ function main() {
       _sha256="${RESULT}";
       logDebugResult SUCCESS "${_sha256}";
     else
+      local _error="${ERROR}";
       logDebugResult FAILURE "error";
+      if ! isEmpty "${_error}"; then
+        logDebug "${_error}";
+      fi
       exitWithErrorCode CANNOT_FETCH_SHA256_FROM_URL "${_url} ${_projectVersion}";
     fi
 
@@ -86,7 +107,11 @@ function main() {
     if updateSha256InFlakeNix "${_flakeFile}" "${_sha256}"; then
       logDebugResult SUCCESS "done";
     else
+      local _error="${ERROR}";
       logDebugResult FAILURE "error";
+      if ! isEmpty "${_error}"; then
+        logDebug "${_error}";
+      fi
       exitWithErrorCode CANNOT_UPDATE_SHA256_IN_FLAKE "${_flakeFile} ${_sha256}";
     fi
   fi
@@ -105,6 +130,7 @@ setScriptCopyright "Copyleft 2023-today Automated Computing Machinery S.L.";
 
 addCommandLineFlag "projectVersion" "V" "The version" OPTIONAL EXPECTS_ARGUMENT;
 addCommandLineFlag "flakeFile" "f" "The Nix flake" OPTIONAL EXPECTS_ARGUMENT;
+addCommandLineFlag "githubToken" "t" "The github token" OPTIONAL EXPECTS_ARGUMENT;
 
 checkReq nix-prefetch-git;
 checkReq jq;

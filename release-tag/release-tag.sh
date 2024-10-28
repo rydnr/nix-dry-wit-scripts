@@ -4,6 +4,7 @@
 
 DW.import file;
 DW.import git;
+DW.import github;
 DW.import gpg;
 
 # fun: main
@@ -48,15 +49,27 @@ function main() {
         logDebugResult SUCCESS "clean";
         logInfo -n "Committing flake.nix and flake.lock in ${_owner}/${_repoName}";
         if ! gitAdd "${_gitRepo}" "flake.nix"; then
+          local _error="${ERROR}";
           logInfoResult FAILURE "failed";
+          if ! isEmpty "${_error}"; then
+            logDebug "${_error}";
+          fi
           exitWithErrorCode CANNOT_ADD_FLAKE_NIX "${_gitRepo}";
         fi
         if ! gitAdd "${_gitRepo}" "flake.lock"; then
+          local _error="${ERROR}";
           logInfoResult FAILURE "failed";
+          if ! isEmpty "${_error}"; then
+            logDebug "${_error}";
+          fi
           exitWithErrorCode CANNOT_ADD_FLAKE_NIX "${_gitRepo}";
         fi
         if ! gitCommit "${_gitRepo}" "${COMMIT_MESSAGE}" "${GPG_KEY_ID}"; then
+          local _error="${ERROR}";
           logInfoResult FAILURE "failed";
+          if ! isEmpty "${_error}"; then
+            logDebug "${_error}";
+          fi
           exitWithErrorCode GIT_COMMIT_FAILED "${_gitRepo}";
         fi
         logInfoResult SUCCESS "done";
@@ -67,7 +80,11 @@ function main() {
         if gitPushTags "${_gitRepo}"; then
           logDebugResult SUCCESS "done";
         else
-          logDebugResult FAILURE "failed";
+          local _error="${ERROR}";
+          logInfoResult FAILURE "failed";
+          if ! isEmpty "${_error}"; then
+            logDebug "${_error}";
+          fi
           exitWithErrorCode GIT_PUSH_TAGS_FAILED "${_gitRepo}";
         fi
         command echo "${_newVersion}"
@@ -134,7 +151,7 @@ function release() {
     if isNotEmpty "${_error}"; then
        logDebug "${_error}";
     fi
-    exitWithErrorCode CANNOT_RETRIEVE_THE_LATEST_REMOTE_TAG_IN_GITHUB;
+    exitWithErrorCode CANNOT_RETRIEVE_THE_LATEST_REMOTE_TAG_IN_GITHUB "https://github.com/${_owner}/${_repo}";
   fi
 
   local _newVersion;
@@ -164,8 +181,8 @@ setScriptDescription "Creates a release tag of a given git repository";
 setScriptLicenseSummary "Distributed under the terms of the GNU General Public License v3";
 setScriptCopyright "Copyleft 2023-today Automated Computing Machinery S.L.";
 
-DW.getScriptName
-SCRIPT_NAME="${RESULT}"
+DW.getScriptName;
+SCRIPT_NAME="${RESULT}";
 addCommandLineFlag "releaseName" "R" "The release name" MANDATORY EXPECTS_ARGUMENT;
 addCommandLineFlag "repository" "r" "The cloned repository" OPTIONAL EXPECTS_ARGUMENT;
 addCommandLineFlag "githubToken" "t" "The github token" OPTIONAL EXPECTS_ARGUMENT;

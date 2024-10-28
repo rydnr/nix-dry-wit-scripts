@@ -5,6 +5,7 @@
 DW.import file;
 DW.import nix-flake;
 DW.import git;
+DW.import github;
 
 # fun: main
 # api: public
@@ -136,7 +137,7 @@ checkReq sed;
 checkReq grep;
 
 addError FLAKE_NIX_FILE_DOES_NOT_EXIST "flake.nix not specified and not found in";
-addError FLAKE_LOCK_FILE_DOES_NOT_EXIST "flake.nix not specified and not found in";
+addError FLAKE_LOCK_FILE_DOES_NOT_EXIST "flake.lock not specified and not found in";
 addError CANNOT_RETRIEVE_LATEST_VERSION_OF_REPO "Cannot retrieve the latest version of repo";
 addError CANNOT_EXTRACT_INPUTS_FROM_FLAKE_LOCK "Cannot extract the inputs from given flake.lock file";
 addError CANNOT_EXTRACT_ORG_FROM_FLAKE_INPUT "Cannot extract the 'org' value from";
