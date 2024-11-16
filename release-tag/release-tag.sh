@@ -89,7 +89,7 @@ function main() {
           _release=${TRUE}
         else
           logInfo "Skipping ${_owner}/${_repoName} since it has no changes besides flake files"
-          exitWithErrorCode NO_CHANGES_IN_REPO "${_gitRepo}"
+          exitWithErrorCode NO_CHANGES_BESIDES_FLAKE_FILES_IN_REPO "${_gitRepo}"
         fi
       fi
     else
@@ -100,6 +100,14 @@ function main() {
         logInfo "Skipping ${_owner}/${_repoName} since it has no changes in flake files"
         exitWithErrorCode NO_FLAKE_CHANGES_IN_REPO "${_gitRepo}"
       fi
+    fi
+  else
+    logDebugResult NEUTRAL "false"
+    if isTrue "${FORCE}"; then
+      _release=${TRUE}
+    else
+      logInfo "Skipping ${_owner}/${_repoName} since it has no changes"
+      exitWithErrorCode NO_CHANGES_IN_REPO "${_gitRepo}"
     fi
   fi
 
@@ -231,6 +239,7 @@ addError GIT_PUSH_FAILED "'git push' failed in"
 addError GIT_PUSH_TAGS_FAILED "'git push --tags' failed in"
 addError NO_CHANGES_IN_REPO "Repository has no changes"
 addError NO_FLAKE_CHANGES_IN_REPO "Repository has no changes in flake files"
+addError NO_CHANGES_BESIDES_FLAKE_FILES_IN_REPO "Repository has no changes besides flake files"
 
 function dw_check_repo_cli_flag() {
   if ! folderExists "${REPOSITORY}"; then

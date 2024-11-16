@@ -46,7 +46,7 @@
         org = "rydnr";
         repo = "nix-dry-wit-scripts";
         pname = "${org}-${repo}";
-        version = "0.0.22";
+        version = "0.0.23";
         pkgs = import nixos { inherit system; };
         description =
           "dry-wit script to update the versions of the inputs of a given flake.nix file, to their latest tags";
