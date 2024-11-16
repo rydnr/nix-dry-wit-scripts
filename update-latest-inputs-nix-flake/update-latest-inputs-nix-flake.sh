@@ -70,10 +70,13 @@ function main() {
   IFS="${DWIFS}"
   for _input in ${_inputs}; do
     IFS=${_origIFS}
-    _name="$(echo "${_input}" | cut -d ':' -f 1)"
-    _owner="$(echo "${_input}" | cut -d ':' -f 2 | cut -d '/' -f 1)"
-    _repo="$(echo "${_input}" | cut -d ':' -f 2 | cut -d '/' -f 2)"
-    _tag="$(echo "${_input}" | cut -d ':' -f 2 | cut -d '/' -f 3)"
+    _name="$(command echo "${_input}" | command cut -d ':' -f 1)"
+    _owner="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 1)"
+    _repo="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 2)"
+    _tag="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 3)"
+    if areEqual "${_owner}" "rydnr" && areEqual "${_repo}" "nix-flakes"; then
+      continue
+    fi
     logDebug -n "github:${_owner}/${_repo}"
     _latestTag=""
     if areEqual "${_owner}" "NixOS" && areEqual "${_repo}" "nixpkgs"; then

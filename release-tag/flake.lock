@@ -77,7 +77,7 @@
       },
       "original": {
         "owner": "pythoneda-shared-def",
-        "ref": "0.0.60",
+        "ref": "0.0.61",
         "repo": "banner",
         "type": "github"
       }
