@@ -36,21 +36,24 @@ function main() {
     _repoName="${RESULT}"
   fi
   local -i _release=${FALSE}
+  local -i _gitAdd=${FALSE}
 
-  if isTrue "${FORCE}"; then
-    _release=${TRUE}
-  else
-    logDebug -n "Checking if ${_owner}/${_repoName} contains anything to release"
-    if isGitRepoDirty "${_gitRepo}"; then
+  logDebug -n "Checking if ${_owner}/${_repoName} contains anything to release"
+  if isGitRepoDirty "${_gitRepo}"; then
+    logDebugResult SUCCESS "true"
+    logDebug -n "Checking if ${_owner}/${_repoName} contains modifications in flake.nix and flake.lock"
+    if gitRepoContainsModificationsIn "${_gitRepo}" "flake.nix" "flake.lock"; then
       logDebugResult SUCCESS "true"
-      logDebug -n "Checking if ${_owner}/${_repoName} contains modifications in flake.nix and flake.lock"
-      if gitRepoContainsModificationsIn "${_gitRepo}" "flake.nix" "flake.lock"; then
-        logDebugResult SUCCESS "true"
-        logDebug -n "Checking if ${_owner}/${_repoName} contains modifications besides flake.nix and flake.lock"
-        if gitRepoContainsModificationsBesides "${_gitRepo}" "flake.nix" "flake.lock"; then
-          logDebugResult NEUTRAL "dirty"
-          logInfo "Skipping ${_owner}/${_repoName} since it has uncommitted changes"
+      logDebug -n "Checking if ${_owner}/${_repoName} contains modifications besides flake.nix and flake.lock"
+      if gitRepoContainsModificationsBesides "${_gitRepo}" "flake.nix" "flake.lock"; then
+        logDebugResult NEUTRAL "dirty"
+        if isTrue "${FORCE}"; then
+          _gitAdd=${TRUE}
+          _release=${TRUE}
         else
+          logInfo "Skipping ${_owner}/${_repoName} since it has uncommitted changes"
+        fi
+        if isTrue ${_gitAdd}; then
           logDebugResult SUCCESS "clean"
           logInfo -n "Committing flake.nix and flake.lock in ${_owner}/${_repoName}"
           if ! gitAdd "${_gitRepo}" "flake.nix"; then
@@ -82,12 +85,21 @@ function main() {
         fi
       else
         logDebugResult NEUTRAL "false"
-        logInfo "Skipping ${_owner}/${_repoName} since it has no changes in flake files"
-        exitWithErrorCode NO_FLAKE_CHANGES_IN_REPO "${_gitRepo}"
+        if isTrue "${FORCE}"; then
+          _release=${TRUE}
+        else
+          logInfo "Skipping ${_owner}/${_repoName} since it has no changes besides flake files"
+          exitWithErrorCode NO_CHANGES_IN_REPO "${_gitRepo}"
+        fi
       fi
     else
       logDebugResult NEUTRAL "false"
-      exitWithErrorCode NO_CHANGES_IN_REPO "${_gitRepo}"
+      if isTrue "${FORCE}"; then
+        _release=${TRUE}
+      else
+        logInfo "Skipping ${_owner}/${_repoName} since it has no changes in flake files"
+        exitWithErrorCode NO_FLAKE_CHANGES_IN_REPO "${_gitRepo}"
+      fi
     fi
   fi
 
