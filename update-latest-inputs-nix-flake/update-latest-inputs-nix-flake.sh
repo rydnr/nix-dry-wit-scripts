@@ -101,10 +101,10 @@ function main() {
           logInfoResult SUCCESS "${_latestTag}"
           logDebug -n "Updating $(command realpath "${_flakeLock}")"
           if updateFlakeLock "${_flakeNix}" "${GITHUB_TOKEN}"; then
-            logInfoResult SUCCESS "done"
+            logDebugResult SUCCESS "done"
           else
             _error="${ERROR}"
-            logInfoResult FAILURE "failed"
+            logDebugResult FAILURE "failed"
             if isNotEmpty "${_error}"; then
               logDebug "${_error}"
             fi
