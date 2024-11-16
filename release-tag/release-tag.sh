@@ -159,10 +159,7 @@ function release() {
     exitWithErrorCode CANNOT_EXTRACT_REPO_FROM_GITHUB_URL "${_url}"
   fi
 
-  if nixBuild "${_gitRepo}"; then
-    logDebugResult SUCCESS "done"
-  else
-    logDebugResult FAILURE "failed"
+  if ! nixBuild "${_gitRepo}"; then
     exitWithErrorCode NIX_BUILD_FAILED "${_gitRepo}"
   fi
 
