@@ -6,6 +6,7 @@ DW.import file
 DW.import git
 DW.import github
 DW.import gpg
+DW.import nix-flake
 
 # fun: main
 # api: public
