@@ -44,6 +44,17 @@ function main() {
     logDebug -n "Checking if ${_owner}/${_repoName} contains modifications in flake.nix and flake.lock"
     if gitRepoContainsModificationsIn "${_gitRepo}" "flake.nix" "flake.lock"; then
       logDebugResult SUCCESS "true"
+      _gitAdd=${TRUE}
+    else
+      logDebugResult NEUTRAL "false"
+      if isTrue "${FORCE}"; then
+        _release=${TRUE}
+      else
+        logInfo "Skipping ${_owner}/${_repoName} since it has no changes in flake files"
+        exitWithErrorCode NO_CHANGES_IN_FLAKE_FILES_IN_REPO "${_gitRepo}"
+      fi
+    fi
+    if isFalse "${_gitAdd}"; then
       logDebug -n "Checking if ${_owner}/${_repoName} contains modifications besides flake.nix and flake.lock"
       if gitRepoContainsModificationsBesides "${_gitRepo}" "flake.nix" "flake.lock"; then
         logDebugResult NEUTRAL "dirty"
@@ -53,79 +64,57 @@ function main() {
         else
           logInfo "Skipping ${_owner}/${_repoName} since it has uncommitted changes"
         fi
+      fi
+    fi
+    if isTrue ${_gitAdd}; then
+      logInfo -n "Committing flake.nix and flake.lock in ${_owner}/${_repoName}"
+      if ! gitAdd "${_gitRepo}" "flake.nix"; then
+        local _error="${ERROR}"
+        logInfoResult FAILURE "failed"
+        if ! isEmpty "${_error}"; then
+          logDebug "${_error}"
+        fi
+        exitWithErrorCode CANNOT_ADD_FLAKE_NIX "${_gitRepo}"
+      fi
+      if ! gitAdd "${_gitRepo}" "flake.lock"; then
+        local _error="${ERROR}"
+        logInfoResult FAILURE "failed"
+        if ! isEmpty "${_error}"; then
+          logDebug "${_error}"
+        fi
+        exitWithErrorCode CANNOT_ADD_FLAKE_NIX "${_gitRepo}"
+      fi
+      if ! gitCommit "${_gitRepo}" "${COMMIT_MESSAGE}" "${GPG_KEY_ID}"; then
+        local _error="${ERROR}"
+        logInfoResult FAILURE "failed"
+        if ! isEmpty "${_error}"; then
+          logDebug "${_error}"
+        fi
+        exitWithErrorCode GIT_COMMIT_FAILED "${_gitRepo}"
+      fi
+      logInfoResult SUCCESS "done"
+      _release=${TRUE}
+    fi
+    if isTrue "${_release}"; then
+      release "${_gitRepo}"
+      local _newVersion="${RESULT}"
+      logDebug -n "Pushing the tags in ${_gitRepo}"
+      if gitPushTags "${_gitRepo}"; then
+        logDebugResult SUCCESS "done"
       else
-        logDebugResult NEUTRAL "false"
-        if isTrue "${FORCE}"; then
-          _release=${TRUE}
-        else
-          logInfo "Skipping ${_owner}/${_repoName} since it has no changes besides flake files"
-          exitWithErrorCode NO_CHANGES_BESIDES_FLAKE_FILES_IN_REPO "${_gitRepo}"
+        local _error="${ERROR}"
+        logInfoResult FAILURE "failed"
+        if ! isEmpty "${_error}"; then
+          logDebug "${_error}"
         fi
+        exitWithErrorCode GIT_PUSH_TAGS_FAILED "${_gitRepo}"
       fi
-      if isTrue ${_gitAdd}; then
-        logDebugResult SUCCESS "clean"
-        logInfo -n "Committing flake.nix and flake.lock in ${_owner}/${_repoName}"
-        if ! gitAdd "${_gitRepo}" "flake.nix"; then
-          local _error="${ERROR}"
-          logInfoResult FAILURE "failed"
-          if ! isEmpty "${_error}"; then
-            logDebug "${_error}"
-          fi
-          exitWithErrorCode CANNOT_ADD_FLAKE_NIX "${_gitRepo}"
-        fi
-        if ! gitAdd "${_gitRepo}" "flake.lock"; then
-          local _error="${ERROR}"
-          logInfoResult FAILURE "failed"
-          if ! isEmpty "${_error}"; then
-            logDebug "${_error}"
-          fi
-          exitWithErrorCode CANNOT_ADD_FLAKE_NIX "${_gitRepo}"
-        fi
-        if ! gitCommit "${_gitRepo}" "${COMMIT_MESSAGE}" "${GPG_KEY_ID}"; then
-          local _error="${ERROR}"
-          logInfoResult FAILURE "failed"
-          if ! isEmpty "${_error}"; then
-            logDebug "${_error}"
-          fi
-          exitWithErrorCode GIT_COMMIT_FAILED "${_gitRepo}"
-        fi
-        logInfoResult SUCCESS "done"
-        _release=${TRUE}
-      fi
-    else
-      logDebugResult NEUTRAL "false"
-      if isTrue "${FORCE}"; then
-        _release=${TRUE}
-      else
-        logInfo "Skipping ${_owner}/${_repoName} since it has no changes in flake files"
-        exitWithErrorCode NO_FLAKE_CHANGES_IN_REPO "${_gitRepo}"
-      fi
+      command echo "${_newVersion}"
     fi
   else
-    logDebugResult NEUTRAL "false"
-    if isTrue "${FORCE}"; then
-      _release=${TRUE}
-    else
-      logInfo "Skipping ${_owner}/${_repoName} since it has no changes"
-      exitWithErrorCode NO_CHANGES_IN_REPO "${_gitRepo}"
-    fi
-  fi
-
-  if isTrue "${_release}"; then
-    release "${_gitRepo}"
-    local _newVersion="${RESULT}"
-    logDebug -n "Pushing the tags in ${_gitRepo}"
-    if gitPushTags "${_gitRepo}"; then
-      logDebugResult SUCCESS "done"
-    else
-      local _error="${ERROR}"
-      logInfoResult FAILURE "failed"
-      if ! isEmpty "${_error}"; then
-        logDebug "${_error}"
-      fi
-      exitWithErrorCode GIT_PUSH_TAGS_FAILED "${_gitRepo}"
-    fi
-    command echo "${_newVersion}"
+    logDebugResult SUCCESS "clean"
+    logInfo "Skipping ${_owner}/${_repoName} since it has no changes"
+    exitWithErrorCode NO_CHANGES_IN_REPO "${_gitRepo}"
   fi
 }
 

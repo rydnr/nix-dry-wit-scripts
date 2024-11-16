@@ -29,7 +29,7 @@
     pythoneda-shared-pythoneda-banner = {
       inputs.flake-utils.follows = "flake-utils";
       inputs.nixos.follows = "nixos";
-      url = "github:pythoneda-shared-pythoneda-def/banner/0.0.48";
+      url = "github:pythoneda-shared-pythoneda-def/banner/0.0.60";
     };
   };
   outputs = inputs:
@@ -45,7 +45,7 @@
         org = "rydnr";
         repo = "nix-dry-wit-scripts";
         pname = "${org}-${repo}";
-        version = "0.0.24";
+        version = "0.0.25";
         pkgs = import nixos { inherit system; };
         description =
           "dry-wit script to update the sha256 values of flake.nix files";
