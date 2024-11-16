@@ -11,17 +11,17 @@
       },
       "locked": {
         "dir": "nix",
-        "lastModified": 1730136206,
-        "narHash": "sha256-EGfW4+4e0RpDYkqfJfogoM+MbIILZr2JJTjav0LgaEc=",
+        "lastModified": 1731753808,
+        "narHash": "sha256-s7y5jer5Ax6nn050T6MAFhdcTOp3Dx8KYvqLFj61kYE=",
         "owner": "rydnr",
         "repo": "dry-wit",
-        "rev": "624f126cba77dce0039d7f5ba9fff52b528edc85",
+        "rev": "53b5d687aea76e16aef10433eca49a57cbc541b4",
         "type": "github"
       },
       "original": {
         "dir": "nix",
         "owner": "rydnr",
-        "ref": "3.0.19",
+        "ref": "3.0.20",
         "repo": "dry-wit",
         "type": "github"
       }
@@ -70,13 +70,13 @@
       "locked": {
         "lastModified": 1731668408,
         "narHash": "sha256-oCzYR2e8hCD9nvjbg1rKHyfZf6t/n75fPYwSiZPZG94=",
-        "owner": "pythoneda-shared-def",
+        "owner": "pythoneda-shared-pythonlang-def",
         "repo": "banner",
         "rev": "a68e4aebbe346d7514ae23d9bd743626854a46ac",
         "type": "github"
       },
       "original": {
-        "owner": "pythoneda-shared-def",
+        "owner": "pythoneda-shared-pythonlang-def",
         "ref": "0.0.61",
         "repo": "banner",
         "type": "github"

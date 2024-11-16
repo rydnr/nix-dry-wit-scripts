@@ -158,6 +158,13 @@ function release() {
     exitWithErrorCode CANNOT_EXTRACT_REPO_FROM_GITHUB_URL "${_url}"
   fi
 
+  if nixBuild "${_gitRepo}"; then
+    logDebugResult SUCCESS "done"
+  else
+    logDebugResult FAILURE "failed"
+    exitWithErrorCode NIX_BUILD_FAILED "${_gitRepo}"
+  fi
+
   local _latestTag
   logDebug -n "Retrieving the latest remote tag of github:${_owner}/${_repo}, semver-compatible"
   if retrieveLatestRemoteTagInGithub "${_owner}" "${_repo}" "${GITHUB_TOKEN}"; then
@@ -226,6 +233,7 @@ addError GIT_COMMIT_FAILED "'git commit' failed in"
 addError GIT_TAG_FAILED "'git tag' failed in"
 addError GIT_PUSH_FAILED "'git push' failed in"
 addError GIT_PUSH_TAGS_FAILED "'git push --tags' failed in"
+addError NIX_BUILD_TAGS_FAILED "'nix build failed in"
 addError NO_CHANGES_IN_REPO "Repository has no changes"
 addError NO_FLAKE_CHANGES_IN_REPO "Repository has no changes in flake files"
 addError NO_CHANGES_BESIDES_FLAKE_FILES_IN_REPO "Repository has no changes besides flake files"
