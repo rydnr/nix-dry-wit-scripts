@@ -53,36 +53,6 @@ function main() {
         else
           logInfo "Skipping ${_owner}/${_repoName} since it has uncommitted changes"
         fi
-        if isTrue ${_gitAdd}; then
-          logDebugResult SUCCESS "clean"
-          logInfo -n "Committing flake.nix and flake.lock in ${_owner}/${_repoName}"
-          if ! gitAdd "${_gitRepo}" "flake.nix"; then
-            local _error="${ERROR}"
-            logInfoResult FAILURE "failed"
-            if ! isEmpty "${_error}"; then
-              logDebug "${_error}"
-            fi
-            exitWithErrorCode CANNOT_ADD_FLAKE_NIX "${_gitRepo}"
-          fi
-          if ! gitAdd "${_gitRepo}" "flake.lock"; then
-            local _error="${ERROR}"
-            logInfoResult FAILURE "failed"
-            if ! isEmpty "${_error}"; then
-              logDebug "${_error}"
-            fi
-            exitWithErrorCode CANNOT_ADD_FLAKE_NIX "${_gitRepo}"
-          fi
-          if ! gitCommit "${_gitRepo}" "${COMMIT_MESSAGE}" "${GPG_KEY_ID}"; then
-            local _error="${ERROR}"
-            logInfoResult FAILURE "failed"
-            if ! isEmpty "${_error}"; then
-              logDebug "${_error}"
-            fi
-            exitWithErrorCode GIT_COMMIT_FAILED "${_gitRepo}"
-          fi
-          logInfoResult SUCCESS "done"
-          _release=${TRUE}
-        fi
       else
         logDebugResult NEUTRAL "false"
         if isTrue "${FORCE}"; then
@@ -91,6 +61,36 @@ function main() {
           logInfo "Skipping ${_owner}/${_repoName} since it has no changes besides flake files"
           exitWithErrorCode NO_CHANGES_BESIDES_FLAKE_FILES_IN_REPO "${_gitRepo}"
         fi
+      fi
+      if isTrue ${_gitAdd}; then
+        logDebugResult SUCCESS "clean"
+        logInfo -n "Committing flake.nix and flake.lock in ${_owner}/${_repoName}"
+        if ! gitAdd "${_gitRepo}" "flake.nix"; then
+          local _error="${ERROR}"
+          logInfoResult FAILURE "failed"
+          if ! isEmpty "${_error}"; then
+            logDebug "${_error}"
+          fi
+          exitWithErrorCode CANNOT_ADD_FLAKE_NIX "${_gitRepo}"
+        fi
+        if ! gitAdd "${_gitRepo}" "flake.lock"; then
+          local _error="${ERROR}"
+          logInfoResult FAILURE "failed"
+          if ! isEmpty "${_error}"; then
+            logDebug "${_error}"
+          fi
+          exitWithErrorCode CANNOT_ADD_FLAKE_NIX "${_gitRepo}"
+        fi
+        if ! gitCommit "${_gitRepo}" "${COMMIT_MESSAGE}" "${GPG_KEY_ID}"; then
+          local _error="${ERROR}"
+          logInfoResult FAILURE "failed"
+          if ! isEmpty "${_error}"; then
+            logDebug "${_error}"
+          fi
+          exitWithErrorCode GIT_COMMIT_FAILED "${_gitRepo}"
+        fi
+        logInfoResult SUCCESS "done"
+        _release=${TRUE}
       fi
     else
       logDebugResult NEUTRAL "false"

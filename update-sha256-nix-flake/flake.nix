@@ -45,7 +45,7 @@
         org = "rydnr";
         repo = "nix-dry-wit-scripts";
         pname = "${org}-${repo}";
-        version = "0.0.23";
+        version = "0.0.24";
         pkgs = import nixos { inherit system; };
         description =
           "dry-wit script to update the sha256 values of flake.nix files";
