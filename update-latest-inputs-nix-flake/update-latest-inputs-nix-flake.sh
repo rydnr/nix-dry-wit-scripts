@@ -107,13 +107,13 @@ function main() {
       logDebugResult SUCCESS "${_latestTag}"
       if ! areEqual "${_tag}" "${_latestTag}"; then
         _rescode=${TRUE}
-        logInfo -n "$(command dirname ${_folder}):${_owner}/${_repo}:${_tag}"
         local _dirAux=""
         if isNotEmpty "${_dir}"; then
           _dirAux="?dir=${_dir}"
         fi
+        logInfo -n "$(command dirname ${_folder}):${_owner}/${_repo}:${_tag}${_dirAux}"
         if updateInputsInFlakeNix "github:${_owner}/${_repo}/${_tag}${_dirAux}" "github:${_owner}/${_repo}/${_latestTag}${_dirAux}" "${_flakeNix}"; then
-          logInfoResult SUCCESS "${_latestTag}"
+          logInfoResult SUCCESS "${_latestTag}${_dirAux}"
           logDebug -n "Updating $(command realpath "${_flakeLock}")"
           if updateFlakeLock "${_flakeNix}" "${GITHUB_TOKEN}"; then
             logDebugResult SUCCESS "done"
