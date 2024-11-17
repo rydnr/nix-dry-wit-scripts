@@ -72,13 +72,17 @@ function main() {
   for _input in ${_inputs}; do
     IFS=${_origIFS}
     _name="$(command echo "${_input}" | command cut -d ':' -f 1)"
+    _url="$(
+      command echo -n "https://github.com/"
+      command echo "${_input}" | command cut -d ':' -f 2
+    )"
     _owner="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 1)"
     _repo="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 2)"
     _tag="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 3)"
     logDebug -n "github:${_owner}/${_repo}"
     local _dir
     _latestTag=""
-    if extractParameterFromUrl "${_input}" "dir"; then
+    if extractParameterFromUrl "${_url}" "dir"; then
       _dir="${RESULT}"
     fi
     if areEqual "${_owner}" "NixOS" && areEqual "${_repo}" "nixpkgs"; then
@@ -104,7 +108,11 @@ function main() {
       if ! areEqual "${_tag}" "${_latestTag}"; then
         _rescode=${TRUE}
         logInfo -n "$(command dirname ${_folder}):${_owner}/${_repo}:${_tag}"
-        if updateInputsInFlakeNix "github:${_owner}/${_repo}/${_tag}" "github:${_owner}/${_repo}/${_latestTag}" "${_flakeNix}"; then
+        local _dirAux=""
+        if isNotEmpty "${_dir}"; then
+          _dirAux="?dir=${_dir}"
+        fi
+        if updateInputsInFlakeNix "github:${_owner}/${_repo}/${_tag}${_dirAux}" "github:${_owner}/${_repo}/${_latestTag}${_dirAux}" "${_flakeNix}"; then
           logInfoResult SUCCESS "${_latestTag}"
           logDebug -n "Updating $(command realpath "${_flakeLock}")"
           if updateFlakeLock "${_flakeNix}" "${GITHUB_TOKEN}"; then
