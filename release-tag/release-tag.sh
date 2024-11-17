@@ -4,6 +4,7 @@
 
 DW.import file
 DW.import git
+DW.import url
 DW.import github
 DW.import gpg
 DW.import nix-flake
@@ -163,18 +164,32 @@ function release() {
     exitWithErrorCode NIX_BUILD_FAILED "${_gitRepo}"
   fi
 
+  local _dir
+  if extractParameterFromUrl "${_url}" "dir"; then
+    _dir="${RESULT}"
+  fi
+
   local _latestTag
   logDebug -n "Retrieving the latest remote tag of github:${_owner}/${_repo}, semver-compatible"
-  if retrieveLatestRemoteTagInGithub "${_owner}" "${_repo}" "${GITHUB_TOKEN}"; then
-    _latestTag="${RESULT}"
-    logDebugResult SUCCESS "${_latestTag}"
+  if isEmpty "${_dir}"; then
+    if retrieveLatestRemoteTagInGithub "${_owner}" "${_repo}" "${GITHUB_TOKEN}"; then
+      _latestTag="${RESULT}"
+      logDebugResult SUCCESS "${_latestTag}"
+    fi
   else
+    if retrieveLatestRemoteTagInGithubMatching "${_owner}" "${_repo}" "^${_dir}.*" "${GITHUB_TOKEN}"; then
+      _latestTag="${RESULT}"
+      logDebugResult SUCCESS "${_latestTag}"
+    fi
+  fi
+
+  if isEmpty "${_latestTag}"; then
     local _error="${ERROR}"
     logDebugResult FAILURE "failed"
     if isNotEmpty "${_error}"; then
       logDebug "${_error}"
     fi
-    exitWithErrorCode CANNOT_RETRIEVE_THE_LATEST_REMOTE_TAG_IN_GITHUB "https://github.com/${_owner}/${_repo}"
+    exitWithErrorCode CANNOT_RETRIEVE_THE_LATEST_REMOTE_TAG_IN_GITHUB "${_url}"
   fi
 
   local _newVersion

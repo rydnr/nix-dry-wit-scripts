@@ -3,6 +3,7 @@
 # Distributed under the terms of the GNU General Public License v3
 
 DW.import file
+DW.import url
 DW.import nix-flake
 DW.import git
 DW.import github
@@ -74,13 +75,18 @@ function main() {
     _owner="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 1)"
     _repo="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 2)"
     _tag="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 3)"
-    if areEqual "${_owner}" "rydnr" && areEqual "${_repo}" "nix-flakes"; then
-      continue
-    fi
     logDebug -n "github:${_owner}/${_repo}"
+    local _dir
     _latestTag=""
+    if extractParameterFromUrl "${_input}" "dir"; then
+      _dir="${RESULT}"
+    fi
     if areEqual "${_owner}" "NixOS" && areEqual "${_repo}" "nixpkgs"; then
       if retrieveLatestStableNixpkgsTag "${GITHUB_TOKEN}"; then
+        _latestTag="${RESULT}"
+      fi
+    elif isNotEmpty "${_dir}"; then
+      if retrieveLatestRemoteTagInGithubMatching "${_owner}" "${_repo}" "^${_dir}.*" "${GITHUB_TOKEN}"; then
         _latestTag="${RESULT}"
       fi
     elif retrieveLatestRemoteTagInGithub "${_owner}" "${_repo}" "${GITHUB_TOKEN}"; then
