@@ -171,16 +171,13 @@ function release() {
 
   local _latestTag
   logDebug -n "Retrieving the latest remote tag of github:${_owner}/${_repo}, semver-compatible"
-  if isEmpty "${_dir}"; then
-    if retrieveLatestRemoteTagInGithub "${_owner}" "${_repo}" "${GITHUB_TOKEN}"; then
-      _latestTag="${RESULT}"
-      logDebugResult SUCCESS "${_latestTag}"
-    fi
-  else
-    if retrieveLatestRemoteTagInGithubMatching "${_owner}" "${_repo}" "^${_dir}.*" "${GITHUB_TOKEN}"; then
-      _latestTag="${RESULT}"
-      logDebugResult SUCCESS "${_latestTag}"
-    fi
+  if isNotEmpty "${_dir}" && retrieveLatestRemoteTagInGithubMatching "${_owner}" "${_repo}" "^${_dir}.*" "${GITHUB_TOKEN}"; then
+    _latestTag="${RESULT}"
+    logDebugResult SUCCESS "${_latestTag}"
+  fi
+  if isEmpty "${_latestTag}" && retrieveLatestRemoteTagInGithub "${_owner}" "${_repo}" "${GITHUB_TOKEN}"; then
+    _latestTag="${RESULT}"
+    logDebugResult SUCCESS "${_latestTag}"
   fi
 
   if isEmpty "${_latestTag}"; then

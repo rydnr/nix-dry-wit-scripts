@@ -89,7 +89,8 @@ function main() {
       if retrieveLatestRemoteTagInGithubMatching "${_owner}" "${_repo}" "^${_dir}.*" "${GITHUB_TOKEN}"; then
         _latestTag="${RESULT}"
       fi
-    elif retrieveLatestRemoteTagInGithub "${_owner}" "${_repo}" "${GITHUB_TOKEN}"; then
+    fi
+    if isEmpty "${_latestTag}" && retrieveLatestRemoteTagInGithub "${_owner}" "${_repo}" "${GITHUB_TOKEN}"; then
       _latestTag="${RESULT}"
     fi
     if isEmpty "${_latestTag}"; then
