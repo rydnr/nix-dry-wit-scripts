@@ -78,9 +78,10 @@ function main() {
     )"
     _owner="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 1)"
     _repo="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 2)"
-    _tag="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 3)"
-    logDebug -n "github:${_owner}/${_repo}"
-    local _dir=""
+    _tag="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 3 | command cut -d '?' -f 1)"
+    logDebug -n "github:${_owner}/${_repo}:${_tag}"
+    local _dir
+    _dir=""
     _latestTag=""
     if extractParameterFromUrl "${_url}" "dir"; then
       _dir="${RESULT}"
