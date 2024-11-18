@@ -80,7 +80,7 @@ function main() {
     _repo="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 2)"
     _tag="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 3)"
     logDebug -n "github:${_owner}/${_repo}"
-    local _dir
+    local _dir=""
     _latestTag=""
     if extractParameterFromUrl "${_url}" "dir"; then
       _dir="${RESULT}"
@@ -111,7 +111,7 @@ function main() {
         if isNotEmpty "${_dir}"; then
           _dirAux="?dir=${_dir}"
         fi
-        logInfo -n "$(command dirname ${_folder}):${_owner}/${_repo}:${_tag}${_dirAux}"
+        logInfo -n "$(command basename $(dirname ${_folder})):${_owner}/${_repo}:${_tag}${_dirAux}"
         if updateInputsInFlakeNix "github:${_owner}/${_repo}/${_tag}${_dirAux}" "github:${_owner}/${_repo}/${_latestTag}${_dirAux}" "${_flakeNix}"; then
           logInfoResult SUCCESS "${_latestTag}${_dirAux}"
           logDebug -n "Updating $(command realpath "${_flakeLock}")"
