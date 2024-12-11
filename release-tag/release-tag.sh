@@ -116,7 +116,6 @@ function main() {
   else
     logDebugResult SUCCESS "clean"
     logInfo "Skipping ${_owner}/${_repoName} since it has no changes"
-    exitWithErrorCode NO_CHANGES_IN_REPO "${_gitRepo}"
   fi
 }
 
@@ -244,7 +243,6 @@ addError GIT_TAG_FAILED "'git tag' failed in"
 addError GIT_PUSH_FAILED "'git push' failed in"
 addError GIT_PUSH_TAGS_FAILED "'git push --tags' failed in"
 addError NIX_BUILD_FAILED "'nix build' failed in"
-addError NO_CHANGES_IN_REPO "Repository has no changes"
 addError NO_FLAKE_CHANGES_IN_REPO "Repository has no changes in flake files"
 addError NO_CHANGES_BESIDES_FLAKE_FILES_IN_REPO "Repository has no changes besides flake files"
 
