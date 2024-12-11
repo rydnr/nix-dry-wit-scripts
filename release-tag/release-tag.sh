@@ -53,7 +53,6 @@ function main() {
         _release=${TRUE}
       else
         logInfo "Skipping ${_owner}/${_repoName} since it has no changes in flake files"
-        exitWithErrorCode NO_CHANGES_IN_FLAKE_FILES_IN_REPO "${_gitRepo}"
       fi
     fi
     if isFalse "${_gitAdd}"; then
@@ -61,7 +60,6 @@ function main() {
       if gitRepoContainsModificationsBesides "${_gitRepo}" "flake.nix" "flake.lock"; then
         logDebugResult NEUTRAL "dirty"
         if isTrue "${FORCE}"; then
-          _gitAdd=${TRUE}
           _release=${TRUE}
         else
           logInfo "Skipping ${_owner}/${_repoName} since it has uncommitted changes"
@@ -244,7 +242,6 @@ addError GIT_PUSH_FAILED "'git push' failed in"
 addError GIT_PUSH_TAGS_FAILED "'git push --tags' failed in"
 addError NIX_BUILD_FAILED "'nix build' failed in"
 addError NO_FLAKE_CHANGES_IN_REPO "Repository has no changes in flake files"
-addError NO_CHANGES_BESIDES_FLAKE_FILES_IN_REPO "Repository has no changes besides flake files"
 
 function dw_check_repo_cli_flag() {
   if ! folderExists "${REPOSITORY}"; then

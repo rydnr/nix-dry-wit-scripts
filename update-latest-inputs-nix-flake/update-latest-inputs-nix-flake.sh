@@ -57,6 +57,7 @@ function main() {
   if extractInputsFromFlakeLock "${_flakeLock}"; then
     _inputs="${RESULT}"
     logDebugResult SUCCESS "done"
+    _rescode=${TRUE}
   else
     logDebugResult FAILURE "error"
     exitWithErrorCode CANNOT_EXTRACT_INPUTS_FROM_FLAKE_LOCK "${_flakeLock}"
