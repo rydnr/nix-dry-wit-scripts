@@ -21,16 +21,16 @@
     "Nix flake for rydnr/nix-dry-wit-scripts/update-latest-inputs-nix-flake";
   inputs = rec {
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
-    nixos.url = "github:NixOS/nixpkgs/24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/24.05";
     dry-wit = {
       inputs.flake-utils.follows = "flake-utils";
-      inputs.nixos.follows = "nixos";
-      url = "github:rydnr/dry-wit/3.0.24?dir=nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:rydnr/dry-wit/3.0.25?dir=nix";
     };
     pythoneda-shared-pythonlang-banner = {
       inputs.flake-utils.follows = "flake-utils";
-      inputs.nixos.follows = "nixos";
-      url = "github:pythoneda-shared-pythonlang-def/banner/0.0.61";
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:pythoneda-shared-pythonlang-def/banner/0.0.74";
     };
   };
   outputs = inputs:
@@ -47,7 +47,7 @@
         repo = "nix-dry-wit-scripts";
         pname = "${org}-${repo}";
         version = "0.0.37";
-        pkgs = import nixos { inherit system; };
+        pkgs = import nixpkgs { inherit system; };
         description =
           "dry-wit script to update the versions of the inputs of a given flake.nix file, to their latest tags";
         license = pkgs.lib.licenses.gpl3;
