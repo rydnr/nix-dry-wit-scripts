@@ -88,7 +88,9 @@ function main() {
       _dir="${RESULT}"
     fi
     if areEqual "${_owner}" "NixOS" && areEqual "${_repo}" "nixpkgs"; then
-      if retrieveLatestStableNixpkgsTag "${GITHUB_TOKEN}"; then
+      if fileExists "${_folder}/flake.overrides" && fileContains "${_folder}/flake.overrides" "inputs.nixpkgs.url"; then
+        _latestTag="$(command grep "${_folder}/flake.overrides" -e "inputs.nixpkgs.url" | command cut -d '=' -f 2)"
+      elif retrieveLatestStableNixpkgsTag "${GITHUB_TOKEN}"; then
         _latestTag="${RESULT}"
       fi
     elif isNotEmpty "${_dir}"; then
