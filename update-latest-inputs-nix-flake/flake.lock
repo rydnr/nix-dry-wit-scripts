@@ -11,17 +11,17 @@
       },
       "locked": {
         "dir": "nix",
-        "lastModified": 1733944054,
-        "narHash": "sha256-9A/ZVjGVhNVqMeNRrB0gtz9v6/kQXYkWnAMuslFHO1g=",
+        "lastModified": 1737611342,
+        "narHash": "sha256-0t+FAXoNJwrEvu/z+siNJIKmSxrkg0FOTeVxm232MWQ=",
         "owner": "rydnr",
         "repo": "dry-wit",
-        "rev": "b8e07c7a8fa4f93c7415b139f42c1c82f2d81609",
+        "rev": "d9f89d7c0aa6b3a9b4eb03dbeff9b76d18c6fd88",
         "type": "github"
       },
       "original": {
         "dir": "nix",
         "owner": "rydnr",
-        "ref": "3.0.25",
+        "ref": "3.0.28",
         "repo": "dry-wit",
         "type": "github"
       }
@@ -44,16 +44,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1717179513,
-        "narHash": "sha256-vboIEwIQojofItm2xGCdZCzW96U85l9nDW3ifMuAIdM=",
+        "lastModified": 1737604399,
+        "narHash": "sha256-6mhxTomwwim6OrUXnXzsbIEdNdUXPF4F2+sXf1MrXPw=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "63dacb46bf939521bdc93981b4cbb7ecb58427a0",
+        "rev": "be24912af5998c5298b827d5304462e16d27215d",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "24.05",
+        "ref": "release-24.11",
         "repo": "nixpkgs",
         "type": "github"
       }

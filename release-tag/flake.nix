@@ -21,11 +21,11 @@
     "Nix flake for rydnr/nix-dry-wit-scripts/release-tag";
   inputs = rec {
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
-    nixpkgs.url = "github:NixOS/nixpkgs/24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-24.11";
     dry-wit = {
       inputs.flake-utils.follows = "flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:rydnr/dry-wit/3.0.25?dir=nix";
+      url = "github:rydnr/dry-wit/3.0.28?dir=nix";
     };
     pythoneda-shared-pythonlang-banner = {
       inputs.flake-utils.follows = "flake-utils";
@@ -77,9 +77,9 @@
       in rec {
         apps = rec {
           default = release-tag-default;
-          release-tag-default = release-tag-bash5;
-          release-tag-bash5 = shared.app-for {
-            package = packages.release-tag-bash5;
+          release-tag-default = release-tag-bash;
+          release-tag-bash = shared.app-for {
+            package = packages.release-tag-bash;
             entrypoint = "release-tag";
           };
           release-tag-zsh = shared.app-for {
@@ -94,9 +94,9 @@
         defaultPackage = packages.default;
         packages = rec {
           default = release-tag-default;
-          release-tag-default = release-tag-bash5;
-          release-tag-bash5 = release-tag-for {
-            dry-wit = dry-wit.packages.${system}.dry-wit-bash5;
+          release-tag-default = release-tag-bash;
+          release-tag-bash = release-tag-for {
+            dry-wit = dry-wit.packages.${system}.dry-wit-bash;
           };
           release-tag-zsh = release-tag-for {
             dry-wit = dry-wit.packages.${system}.dry-wit-zsh;

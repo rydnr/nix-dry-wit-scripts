@@ -21,11 +21,11 @@
     "Nix flake for rydnr/nix-dry-wit-scripts/update-latest-inputs-nix-flake";
   inputs = rec {
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
-    nixpkgs.url = "github:NixOS/nixpkgs/24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-24.11";
     dry-wit = {
       inputs.flake-utils.follows = "flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:rydnr/dry-wit/3.0.25?dir=nix";
+      url = "github:rydnr/dry-wit/3.0.28?dir=nix";
     };
     pythoneda-shared-pythonlang-banner = {
       inputs.flake-utils.follows = "flake-utils";
@@ -78,9 +78,9 @@
         apps = rec {
           default = update-latest-inputs-nix-flake-default;
           update-latest-inputs-nix-flake-default =
-            update-latest-inputs-nix-flake-bash5;
-          update-latest-inputs-nix-flake-bash5 = shared.app-for {
-            package = packages.update-latest-inputs-nix-flake-bash5;
+            update-latest-inputs-nix-flake-bash;
+          update-latest-inputs-nix-flake-bash = shared.app-for {
+            package = packages.update-latest-inputs-nix-flake-bash;
             entrypoint = "update-latest-inputs-nix-flake";
           };
           update-latest-inputs-nix-flake-zsh = shared.app-for {
@@ -96,10 +96,10 @@
         packages = rec {
           default = update-latest-inputs-nix-flake-default;
           update-latest-inputs-nix-flake-default =
-            update-latest-inputs-nix-flake-bash5;
-          update-latest-inputs-nix-flake-bash5 =
+            update-latest-inputs-nix-flake-bash;
+          update-latest-inputs-nix-flake-bash =
             update-latest-inputs-nix-flake-for {
-              dry-wit = dry-wit.packages.${system}.dry-wit-bash5;
+              dry-wit = dry-wit.packages.${system}.dry-wit-bash;
             };
           update-latest-inputs-nix-flake-zsh =
             update-latest-inputs-nix-flake-for {

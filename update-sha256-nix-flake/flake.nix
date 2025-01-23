@@ -23,10 +23,10 @@
     dry-wit = {
       inputs.flake-utils.follows = "flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:rydnr/dry-wit/3.0.25?dir=nix";
+      url = "github:rydnr/dry-wit/3.0.28?dir=nix";
     };
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
-    nixpkgs.url = "github:NixOS/nixpkgs/24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-24.11";
     pythoneda-shared-pythonlang-banner = {
       inputs.flake-utils.follows = "flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -77,9 +77,9 @@
       in rec {
         apps = rec {
           default = update-sha256-nix-flake-default;
-          update-sha256-nix-flake-default = update-sha256-nix-flake-bash5;
-          update-sha256-nix-flake-bash5 = shared.app-for {
-            package = packages.update-sha256-nix-flake-bash5;
+          update-sha256-nix-flake-default = update-sha256-nix-flake-bash;
+          update-sha256-nix-flake-bash = shared.app-for {
+            package = packages.update-sha256-nix-flake-bash;
             entrypoint = "update-sha256-nix-flake";
           };
           update-sha256-nix-flake-zsh = shared.app-for {
@@ -94,9 +94,9 @@
         defaultPackage = packages.default;
         packages = rec {
           default = update-sha256-nix-flake-default;
-          update-sha256-nix-flake-default = update-sha256-nix-flake-bash5;
-          update-sha256-nix-flake-bash5 = update-sha256-nix-flake-for {
-            dry-wit = dry-wit.packages.${system}.dry-wit-bash5;
+          update-sha256-nix-flake-default = update-sha256-nix-flake-bash;
+          update-sha256-nix-flake-bash = update-sha256-nix-flake-for {
+            dry-wit = dry-wit.packages.${system}.dry-wit-bash;
           };
           update-sha256-nix-flake-zsh = update-sha256-nix-flake-for {
             dry-wit = dry-wit.packages.${system}.dry-wit-zsh;
