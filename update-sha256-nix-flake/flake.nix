@@ -23,7 +23,7 @@
     dry-wit = {
       inputs.flake-utils.follows = "flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:rydnr/dry-wit/3.0.30?dir=nix";
+      url = "github:rydnr/dry-wit/3.0.31?dir=nix";
     };
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
     nixpkgs.url = "github:NixOS/nixpkgs/release-24.11";
