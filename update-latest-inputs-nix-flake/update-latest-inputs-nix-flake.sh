@@ -80,7 +80,6 @@ function main() {
     _owner="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 1)"
     _repo="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 2)"
     _tag="$(command echo "${_input}" | command cut -d ':' -f 2 | command cut -d '/' -f 3 | command cut -d '?' -f 1)"
-    logDebug -n "github:${_owner}/${_repo}:${_tag}"
     local _dir
     _dir=""
     _latestTag=""
@@ -103,19 +102,22 @@ function main() {
     fi
     if isEmpty "${_latestTag}"; then
       _error="${ERROR}"
+      logDebug -n "github:${_owner}/${_repo}"
       logDebugResult NEUTRAL "skipped"
       if isNotEmpty "${_error}"; then
-        logDebug "${_error}"
+        logDebug "ERROR: ${_error}"
       fi
     else
-      logDebugResult SUCCESS "${_latestTag}"
-      if ! areEqual "${_tag}" "${_latestTag}"; then
+      if areEqual "${_tag}" "${_latestTag}"; then
+        logInfo -n "github:${_owner}/${_repo}"
+        logInfoResult SUCCESS "${_tag}"
+      else
         _rescode=${TRUE}
         local _dirAux=""
         if isNotEmpty "${_dir}"; then
           _dirAux="?dir=${_dir}"
         fi
-        logInfo -n "$(command basename $(dirname ${_folder})):${_owner}/${_repo}:${_tag}${_dirAux}"
+        logInfo -n "${_owner}/${_repo}:${_tag}${_dirAux}"
         if updateInputsInFlakeNix "github:${_owner}/${_repo}/${_tag}${_dirAux}" "github:${_owner}/${_repo}/${_latestTag}${_dirAux}" "${_flakeNix}"; then
           logInfoResult SUCCESS "${_latestTag}${_dirAux}"
           logDebug -n "Updating $(command realpath "${_flakeLock}")"
